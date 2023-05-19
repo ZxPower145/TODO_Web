@@ -1,5 +1,5 @@
 import streamlit as st
-from send_email import send_email
+from files.send_email import send_email
 
 st.header("Contact me if you like my work :")
 
