@@ -1,5 +1,5 @@
 import requests as req
-import send_email as se
+from files import send_email as se
 import streamlit as st
 
 api_key = "79d1f6c78da344299c31ce709ef97daf"
