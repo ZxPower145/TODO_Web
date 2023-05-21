@@ -1,11 +1,13 @@
 import requests as req
-from files import send_email as se
+import send_email as se
 import streamlit as st
 
 api_key = "79d1f6c78da344299c31ce709ef97daf"
 
+body = ""
+
 # UI
-st.header("Receive 20 news about a topic you choose:")
+st.header("Receive 20 news about a topic you choose :")
 st.subheader("Make sure to check your spam folder!")
 
 with st.form(key="email_form"):
@@ -14,34 +16,34 @@ with st.form(key="email_form"):
                                                                  'General', 'Health', 'Science', 'Sports',
                                                                  'Technology'))
 
+# The url for the news API
+    url = f"https://newsapi.org/v2/everything?q={topic.lower()}&" \
+          "from=2023-04-21&" \
+          "sortBy=publishedAt&" \
+          f"apiKey={api_key}&" \
+          "language=en"
+
+    # made a request
+    request = req.get(url)
+
+    # Get a dictionary with data
+    content = request.json()
+
     sub_btn = st.form_submit_button("Send")
+    for article in content["articles"][:20]:
+        if article["title"] is not None:
+            body = body + article["title"] + "\n" \
+                   + article["description"] + "\n" \
+                   + article["url"] + 2 * "\n"
+
+    message = f"""\
+    Subject: {topic.capitalize()} News Letter
+
+    {body}
+
+    """
+    message = message.encode("utf-8")
     if sub_btn:
-        # The URL for the news API
-        url = f"https://newsapi.org/v2/everything?q={topic.lower()}&" \
-              "from=2023-04-21&" \
-              "sortBy=publishedAt&" \
-              f"apiKey={api_key}&" \
-              "language=en"
+        se.send_email(message, user_email)
+        st.info("Email sent successfully!")
 
-        try:
-            # Make the API request
-            response = req.get(url)
-            content = response.json()
-
-            # Construct the email body
-            body = ""
-            for article in content["articles"][:20]:
-                if article.get("title"):
-                    body += article["title"] + "\n" + article["description"] + "\n" + article["url"] + "\n\n"
-
-            if body:
-                message = f"Subject: {topic.capitalize()} News Letter\n\n{body}"
-                se.send_email(message.encode("utf-8"), user_email)
-                st.info("Email sent successfully!")
-            else:
-                st.warning("No articles found for the selected topic.")
-
-        except req.RequestException as e:
-            st.error(f"Error occurred while making the API request: {e}")
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
