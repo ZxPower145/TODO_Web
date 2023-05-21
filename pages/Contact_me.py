@@ -1,6 +1,10 @@
 import streamlit as st
 from files.send_email import send_email
 
+st.set_page_config(layout="wide",
+                   page_title="Contact Me",
+                   page_icon="📨")
+
 st.header("Contact me if you like my work :")
 
 with st.form(key="email_form"):

@@ -3,7 +3,9 @@ from files import functions as fn
 
 todos = fn.list_r()
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",
+                   page_title="To Do App",
+                   page_icon="📃")
 
 
 def add_todo():

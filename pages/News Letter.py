@@ -6,6 +6,10 @@ api_key = "79d1f6c78da344299c31ce709ef97daf"
 
 body = ""
 
+st.set_page_config(layout="wide",
+                   page_icon="🗞️",
+                   page_title="NewsLetter")
+
 # UI
 st.header("Receive 20 news about a topic you choose :")
 st.subheader("Make sure to check your spam folder!")
