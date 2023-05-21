@@ -37,7 +37,7 @@ with st.form(key="email_form"):
                    + article["url"] + 2 * "\n"
 
     message = f"""\
-    Subject: {topic.capitalize()} News Letter
+    Subject: {topic} News Letter
 
     {body}
 
