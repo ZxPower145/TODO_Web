@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-file = pd.read_csv("../files/happy.csv")
+file = pd.read_csv("files/happy.csv")
 
 st.set_page_config(layout="wide", page_title="Happiness data API", page_icon="😁")
 st.header("In search for happiness")
