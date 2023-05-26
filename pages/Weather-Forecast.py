@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+from files import weather_backend
 
 st.set_page_config(layout="wide",
                    page_title="Weather Forecast",
@@ -15,21 +16,30 @@ option = st.selectbox(
 )
 
 if days == 1:
-    text = f"{option} for the next day in {place}: "
+    text = f"{option} for the next day in {place.capitalize()}: "
 else:
-    text = f"{option} for the next {days} days in {place}: "
-st.subheader(text)
+    text = f"{option} for the next {days} days in {place.capitalize()}: "
 
-
-def get_data(days_lc):
-    dates = ["2022-25-10", "2022-26-10", "2022-27-10"]
-    temp = [10, 11, 15]
-    temp = [days_lc * i for i in temp]
-    return dates, temp
-
-
-d, t = get_data(days)
-
-figure = px.line(x=d, y=t, labels={"x": "Date",
-                                   "y": "Temperature(C)"})
-st.plotly_chart(figure)
+if place:
+    try:
+        filtered_data, location = weather_backend.get_data(place, days)
+        if place in location["name"]:
+            a = st.subheader(text)
+        else:
+            a = ""
+        if option == "Temperature":
+            temp = [dict["main"]["temp"] for dict in filtered_data]
+            dates = [dict["dt_txt"] for dict in filtered_data]
+            figure = px.line(x=dates, y=temp, labels={"x": "Date",
+                                                      "y": "Temperature(C)"})
+            st.plotly_chart(figure)
+        if option == "Sky":
+            sky_condition = [dict["weather"][0]["main"] for dict in filtered_data]
+            images = {"Clear": "files/sky/clear.png",
+                      "Clouds": "files/sky/cloud.png",
+                      "Rain": "files/sky/rain.png",
+                      "Snow": "files/sky/snow.png"}
+            st.image([images[condition] for condition in sky_condition], width=150)
+    except KeyError:
+        a = None
+        st.warning("Please provide an existing place!")
